@@ -23,6 +23,8 @@ public:
     // Merkle Authentication path
     const libsnark::pb_variable_array<FieldT> path;
 
+    // Hashes
+    libsnark::pb_variable_array<FieldT> hashes;
     // Gadget informing the position in the three of the computed
     // hash and authentication node
     std::vector<merkle_path_selector<FieldT>> selectors;
