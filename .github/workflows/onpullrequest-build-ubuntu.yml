@@ -98,11 +98,11 @@ jobs:
       with:
         key: grpc-1.31.x-${{ runner.os }}-test
         path: depends/grpc
-    - name: Cache ccache
-      uses: actions/cache@v2
-      with:
-        key: integration-tests-ccache-${{ needs.onpr-submodules.outputs.commits }}-${{ matrix.curve }}-${{ runner.os }}-test
-        path: ~/.ccache
+    # - name: Cache ccache
+    #   uses: actions/cache@v2
+    #   with:
+    #     key: integration-tests-ccache-${{ needs.onpr-submodules.outputs.commits }}-${{ matrix.curve }}-${{ runner.os }}-test
+    #     path: ~/.ccache
     - name: Cache pip
       uses: actions/cache@v2
       with:
