@@ -204,7 +204,7 @@ generate Zeth notes intended for the public address `zeth-address.pub`:
 (env)$ zeth sync
 ```
 
-Any notes found are stored in the `./notes` directory as individual files.
+Any notes found are stored in the `./wallet` directory as individual files.
 These files contain the secret data required to spend the note.
 
 ```console
