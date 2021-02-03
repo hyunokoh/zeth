@@ -200,6 +200,7 @@ generate Zeth notes intended for the public address `zeth-address.pub`:
 ```console
 # Check all new blocks for notes addressed to `zeth-address.pub`,
 # storing them in the ./notes directory.
+# ./notes가 아니라 wallet directory에 저장된다.
 (env)$ zeth sync
 ```
 
@@ -240,6 +241,7 @@ creation of Zeth notes.
 ```console
 # Deposit 10 ether from `eth-address`, creating Zeth notes owned by Alice
 (env)$ zeth mix --out zeth-address.pub,10 --vin 10
+# zeth sync를 해 주어야 note가 생긴다.
 ```
 
 ### Privately send a ZethNote to another user
