@@ -25,26 +25,27 @@
 
 ```
 // IKIP27
-event anonTransfer(uint256 hashed);
-event Approval(address indexed owner, address indexed spender, uint256 value);
+// event AnonTransfer(uint256 hashed);
+// event Approval(address indexed owner, address indexed spender, uint256 value);
 
 function totalSupply() external view returns (uint256);
-function balanceOf(address account) external view returns (uint256);
-function transfer(address recipient, uint256 amount) external returns (bool);
-function allowance(address owner, address spender) external view returns (uint256);
-function approve(address spender, uint256 amount) external returns (bool);
-function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
-function safeTransfer(address recipient, uint256 amount, bytes data) external;
-function safeTransfer(address recipient, uint256 amount) external;
-function safeTransferFrom(address sender, address recipient, uint256 amount, bytes data) external;
-function safeTransferFrom(address sender, address recipient, uint256 amount) external;
+function encBalanceOf(address account) external view returns (ciphertext);  // It returns a ciphertext of (u, v, addr)
+function anonTransfer(uint256 rt, uint256 sn, uint256 commit, uint256 hashed, ciphertext ct, proof pi) external returns (bool);
 
-function paused() external view returns (bool);
-function pause() external;
-function unpause() external;
-function isPauser(address _account) external view returns (bool);
-function addPauser(address _account) external;
-function renouncePauser() external;
+// IKIP27Exchangeable (optional)
+function deposit(address recipient, uint256 amount, proof pi); 
+function withdraw(address sender, uint256 amount, ciphertext ct, proof pi);
+
+// IKIP7Mintable (optional)
+function mint(address _to, ciphertext ct, uint256 _amount, proof pi) external returns (bool);
+function isMinter(address _account) external view returns (bool);
+function addMinter(address _account) external;
+function renounceMinter() external;
+
+// IKIP27Burnable (optional)
+function burn(uint256 _amount, ciphertext ct, proof pi) external;
+function burnFrom(address _account, uint256 _amount, ciphertext ct, proof pi) external;
+
 ```
 
 
