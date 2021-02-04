@@ -5,14 +5,19 @@
 - sync : blockchain에 있는 내용을 download받아서 local wallet에 저장한다.
 - ls-notes, ls-commits : local wallet에 저장된 내용을 display한다.
 
-## zklay에서 지원되어야 하는 명령어
-- deploy : zklay에 필요한 공용 parameter 생성
+## zklay에서 지원되어야 하는 명령어 (client/zeth/cli에 명령어 추가 및 제거, client/test_commands 및 tests 수정 필요)
+- deploy : zeth와 동일. 추가적으로 zklay에 필요한 공용 parameter 생성
 - audit-key-gen : auditor secret key와 public key를 생성한다. auditor public key는 공용 parameter와 함께 사용된다. 
 - key-gen : gen-address에 동일. user의 public key들을 생성한다. 이때 private key file을 제공해 주어야 한다.
 - deposit : EOA등 user account에서 zklay 내부 ena (encrypted account)로 klay나 token을 transfer한다.
 - withdraw : ena에서 외부 user account로 klay나 token을 transfer한다.
 - anon-transfer : anonymous transfer. It tranfers between ena and mixer
+- sync, ls-notes, ls-commits : zeth와 동일
 
+## Smart contract 부분 (zeth_contracts/contracts 디렉토리에서)
+- MixerBase.sol에 ena 내용을 mapping으로 추가
+- function mix를 anon-transfer로 하고, snark verify도 수정
+- deposit, withdraw 함수를 MixerBase.sol에 
 
 # Python client to interact with the prover
 
