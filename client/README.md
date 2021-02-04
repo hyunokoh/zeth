@@ -1,16 +1,17 @@
 ## 현재 zeth에서 지원되는 명령어
-deploy : smart contract를 blockchain에 넣는 명령어. 그리고, zeth에 해당하는 공용 parameter값도 생성해서 zeth_instance file로 저장한다.
-gen-address : zeth secret key와 public address를 생성한다. 
-mix : user EOA와 mix에 있는 note들 사이에 transaction을 만든다. 즉 transfer함수
-sync : blockchain에 있는 내용을 download받아서 local wallet에 저장한다.
-ls-notes, ls-commits : local wallet에 저장된 내용을 display한다.
+- deploy : smart contract를 blockchain에 넣는 명령어. 그리고, zeth에 해당하는 공용 parameter값도 생성해서 zeth_instance file로 저장한다.
+- gen-address : zeth secret key와 public address를 생성한다. 
+- mix : user EOA와 mix에 있는 note들 사이에 transaction을 만든다. 즉 transfer함수
+- sync : blockchain에 있는 내용을 download받아서 local wallet에 저장한다.
+- ls-notes, ls-commits : local wallet에 저장된 내용을 display한다.
 
 ## zklay에서 지원되어야 하는 명령어
-deploy : zklay에 필요한 공용 parameter 생성
-audit-key-gen : auditor secret key와 public key를 생성한다. auditor public key는 공용 parameter와 함께 사용된다. 
-key-gen : gen-address에 동일. user의 public key들을 생성한다. 이때 private key file을 제공해 주어야 한다.
-
-
+- deploy : zklay에 필요한 공용 parameter 생성
+- audit-key-gen : auditor secret key와 public key를 생성한다. auditor public key는 공용 parameter와 함께 사용된다. 
+- key-gen : gen-address에 동일. user의 public key들을 생성한다. 이때 private key file을 제공해 주어야 한다.
+- deposit : EOA등 user account에서 zklay 내부 ena (encrypted account)로 klay나 token을 transfer한다.
+- withdraw : ena에서 외부 user account로 klay나 token을 transfer한다.
+- anon-transfer : anonymous transfer. It tranfers between ena and mixer
 
 
 # Python client to interact with the prover
