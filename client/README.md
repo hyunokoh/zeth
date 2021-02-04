@@ -16,9 +16,37 @@
 
 ## Smart contract 부분 (zeth_contracts/contracts 디렉토리에서)
 - MixerBase.sol에 ena 내용을 mapping으로 추가
-- function mix를 anon-transfer로 하고, snark verify도 수정
+- function mix를 anonTransfer로 하고, snark verify도 수정
 - deposit, withdraw 함수를 MixerBase.sol에 추가
 - public value에 관련된 함수 수정 제거
+
+## 대체 가능 익명 토큰 표준 (KIP-27)
+- 대체 가능한 익명 토큰은 균등성, 가분성, 익명성을 가진 토큰입니다. 각 토큰 단위는 동일한 가치를 가지며 모든 가용 토큰은 서로 호환됩니다. 각 토큰은 값은 암호화되어 저장되며 전달됩니다. 익명성을 제공하는 기본적인 암호 화폐에 필수적인 기능을 담고 있습니다. 대체 가능 토큰 표준인 KIP-7의 익명화 토큰 표준입니다.
+
+```
+// IKIP27
+event anonTransfer(uint256 hashed);
+event Approval(address indexed owner, address indexed spender, uint256 value);
+
+function totalSupply() external view returns (uint256);
+function balanceOf(address account) external view returns (uint256);
+function transfer(address recipient, uint256 amount) external returns (bool);
+function allowance(address owner, address spender) external view returns (uint256);
+function approve(address spender, uint256 amount) external returns (bool);
+function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
+function safeTransfer(address recipient, uint256 amount, bytes data) external;
+function safeTransfer(address recipient, uint256 amount) external;
+function safeTransferFrom(address sender, address recipient, uint256 amount, bytes data) external;
+function safeTransferFrom(address sender, address recipient, uint256 amount) external;
+
+function paused() external view returns (bool);
+function pause() external;
+function unpause() external;
+function isPauser(address _account) external view returns (bool);
+function addPauser(address _account) external;
+function renouncePauser() external;
+```
+
 
 # Python client to interact with the prover
 
