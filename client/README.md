@@ -17,7 +17,8 @@
 ## Smart contract 부분 (zeth_contracts/contracts 디렉토리에서)
 - MixerBase.sol에 ena 내용을 mapping으로 추가
 - function mix를 anon-transfer로 하고, snark verify도 수정
-- deposit, withdraw 함수를 MixerBase.sol에 
+- deposit, withdraw 함수를 MixerBase.sol에 추가
+- public value에 관련된 함수 수정 제거
 
 # Python client to interact with the prover
 
