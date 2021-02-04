@@ -68,6 +68,10 @@ docker build -f Dockerfile-dev -t zeth-dev .
 # Start the zeth development container
 docker run -ti -p 50051:50051 --name zeth zeth-dev:latest
 
+# 이미 생성된 도커 이미지를 실행 시키기 위한 명령어
+docker start zeth
+docker attatch zeth
+
 # All the commands below are run in the docker container
 # Configure your environment
 . ./setup_env.sh
