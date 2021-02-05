@@ -15,36 +15,24 @@
 - sync, ls-notes, ls-commits : zeth와 동일
 
 ## Smart contract 부분 (zeth_contracts/contracts 디렉토리에서)
-- MixerBase.sol에 ena 내용을 mapping으로 추가
+- Zklay.sol에 ena 내용을 mapping으로 추가
 - function mix를 anonTransfer로 하고, snark verify도 수정
 - deposit, withdraw 함수를 MixerBase.sol에 추가
 - public value에 관련된 함수 수정 제거
 
 ## 대체 가능 익명 토큰 표준 (KIP-27)
-- 대체 가능한 익명 토큰은 균등성, 가분성, 익명성을 가진 토큰입니다. 각 토큰 단위는 동일한 가치를 가지며 모든 가용 토큰은 서로 호환됩니다. 각 토큰은 값은 암호화되어 저장되며 전달됩니다. 익명성을 제공하는 기본적인 암호 화폐에 필수적인 기능을 담고 있습니다. 대체 가능 토큰 표준인 KIP-7의 익명화 토큰 표준입니다.
+- 대체 가능한 익명 토큰은 균등성, 가분성, 익명성을 가진 토큰입니다. 각 토큰 단위는 동일한 가치를 가지며 모든 가용 토큰은 서로 호환됩니다. 각 토큰은 값은 암호화되어 저장되며 전달됩니다. 익명성을 제공하는 기본적인 암호 화폐에 필수적인 기능을 담고 있습니다. 대체 가능 토큰 표준인 KIP-7의 익명화 토큰 표준입니다. KIP-7와 결합하여 익명화 토큰을 만들 수 있습니다.
 
 ```
 // IKIP27
 // event AnonTransfer(uint256 hashed);
-// event Approval(address indexed owner, address indexed spender, uint256 value);
 
-function totalSupply() external view returns (uint256);
 function encBalanceOf(address account) external view returns (ciphertext);  // It returns a ciphertext of (u, v, addr)
 function anonTransfer(uint256 rt, uint256 sn, uint256 commit, uint256 hashed, ciphertext ct, proof pi) external returns (bool);
 
-// IKIP27Exchangeable (optional)
+// IKIP27Exchangeable
 function deposit(address recipient, uint256 amount, proof pi); 
 function withdraw(address sender, uint256 amount, ciphertext ct, proof pi);
-
-// IKIP7Mintable (optional)
-function mint(address _to, ciphertext ct, uint256 _amount, proof pi) external returns (bool);
-function isMinter(address _account) external view returns (bool);
-function addMinter(address _account) external;
-function renounceMinter() external;
-
-// IKIP27Burnable (optional)
-function burn(uint256 _amount, ciphertext ct, proof pi) external;
-function burnFrom(address _account, uint256 _amount, ciphertext ct, proof pi) external;
 
 ```
 
