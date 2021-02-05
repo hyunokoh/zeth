@@ -1,3 +1,42 @@
+## 현재 zeth에서 지원되는 명령어
+- deploy : smart contract를 blockchain에 넣는 명령어. 그리고, zeth에 해당하는 공용 parameter값도 생성해서 zeth_instance file로 저장한다.
+- gen-address : zeth secret key와 public address를 생성한다. 
+- mix : user EOA와 mix에 있는 note들 사이에 transaction을 만든다. 즉 transfer함수
+- sync : blockchain에 있는 내용을 download받아서 local wallet에 저장한다.
+- ls-notes, ls-commits : local wallet에 저장된 내용을 display한다.
+
+## zklay에서 지원되어야 하는 명령어 (client/zeth/cli에 명령어 추가 및 제거, client/test_commands 및 tests 수정 필요)
+- deploy : zeth와 동일. 추가적으로 zklay에 필요한 공용 parameter 생성
+- audit-key-gen : auditor secret key와 public key를 생성한다. auditor public key는 공용 parameter와 함께 사용된다. 
+- key-gen : gen-address에 동일. user의 public key들을 생성한다. 이때 private key file을 제공해 주어야 한다.
+- deposit : EOA등 user account에서 zklay 내부 ena (encrypted account)로 klay나 token을 transfer한다.
+- withdraw : ena에서 외부 user account로 klay나 token을 transfer한다.
+- anon-transfer : anonymous transfer. It tranfers between ena and mixer
+- sync, ls-notes, ls-commits : zeth와 동일
+
+## Smart contract 부분 (zeth_contracts/contracts 디렉토리에서)
+- Zklay.sol에 ena 내용을 mapping으로 추가
+- function mix를 anonTransfer로 하고, snark verify도 수정
+- deposit, withdraw 함수를 MixerBase.sol에 추가
+- public value에 관련된 함수 수정 제거
+
+## 대체 가능 익명 토큰 표준 (KIP-27)
+- 대체 가능한 익명 토큰은 균등성, 가분성, 익명성을 가진 토큰입니다. 각 토큰 단위는 동일한 가치를 가지며 모든 가용 토큰은 서로 호환됩니다. 각 토큰은 값은 암호화되어 저장되며 전달됩니다. 익명성을 제공하는 기본적인 암호 화폐에 필수적인 기능을 담고 있습니다. 대체 가능 토큰 표준인 KIP-7의 익명화 토큰 표준입니다. KIP-7와 결합하여 익명화 토큰을 만들 수 있습니다.
+
+```
+// IKIP27
+// event AnonTransfer(uint256 hashed);
+
+function encBalanceOf(address account) external view returns (ciphertext);  // It returns a ciphertext of (u, v, addr)
+function anonTransfer(uint256 rt, uint256 sn, uint256 commit, uint256 hashed, ciphertext ct, proof pi) external returns (bool);
+
+// IKIP27Exchangeable
+function deposit(address recipient, uint256 amount, proof pi); 
+function withdraw(address sender, uint256 amount, ciphertext ct, proof pi);
+
+```
+
+
 # Python client to interact with the prover
 
 ## Structure of the directory
@@ -32,6 +71,8 @@ Ensure that the following are installed:
 
 Execute the following inside the `client` directory.
 ```console
+
+
 $ python -m venv env
 $ source env/bin/activate
 (env)$ make setup
@@ -200,10 +241,11 @@ generate Zeth notes intended for the public address `zeth-address.pub`:
 ```console
 # Check all new blocks for notes addressed to `zeth-address.pub`,
 # storing them in the ./notes directory.
+# ./notes가 아니라 wallet directory에 저장된다.
 (env)$ zeth sync
 ```
 
-Any notes found are stored in the `./notes` directory as individual files.
+Any notes found are stored in the `./wallet` directory as individual files.
 These files contain the secret data required to spend the note.
 
 ```console
@@ -240,6 +282,7 @@ creation of Zeth notes.
 ```console
 # Deposit 10 ether from `eth-address`, creating Zeth notes owned by Alice
 (env)$ zeth mix --out zeth-address.pub,10 --vin 10
+# zeth sync를 해 주어야 note가 생긴다.
 ```
 
 ### Privately send a ZethNote to another user

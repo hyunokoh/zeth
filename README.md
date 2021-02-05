@@ -68,6 +68,10 @@ docker build -f Dockerfile-dev -t zeth-dev .
 # Start the zeth development container
 docker run -ti -p 50051:50051 --name zeth zeth-dev:latest
 
+# 이미 생성된 도커 이미지를 실행 시키기 위한 명령어
+docker start zeth
+docker attatch zeth
+
 # All the commands below are run in the docker container
 # Configure your environment
 . ./setup_env.sh
@@ -117,7 +121,14 @@ npm install
 
 # Start a local Ethereum testnet
 npm run testrpc
+# 만약 testrpc 오류가 발생한다면
+# package.json 파일의 testrpc 경로를 local 경로로 잡아줘야 함. (zeth 에서 제공하는 custom ganache-cli가 작동하지 않는 것으로 보임)
+# ex) "testrpc": "node /usr/local/lib/node_modules/ganache-cli/cli.js --hardfork istanbul --port 8545 --gasLimit 0x3FFFFFFFFFFFF --gasPrice 1 --defaultBalanceEther 90000000000 --networkId 1234",
+# 만약 ganache-cli 가 없다면
+npm install -g ganache-cli
+
 ```
+
 
 #### Terminal 3: Python client
 
