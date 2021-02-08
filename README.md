@@ -21,7 +21,7 @@ It follows and extends the design presented in [zerocash-ethereum](https://githu
 In order to follow the README below, you will need:
 - [Docker](https://www.docker.com/get-started)  한번은 직접 수행해 주어야 함
 - [Npm](https://www.npmjs.com/get-npm) (at least version `6.9.0`)
-- //[Node](https://nodejs.org/en/) (recommended version `v10` to be able to build and use the custom `ganache-cli`)
+- //[Node](https://nodejs.org/en/) (recommended version `v10` to be able to build and use the custom `ganache-cli`).  mac에서는 sudo npm install -g ganache-cli 를 해 주어야 한다.
 - [Python3](https://www.python.org/downloads/) (at least version `3.8.2`)
 - [Pip](https://pip.pypa.io/en/stable/) (at least version `19.0.2`)
 
@@ -52,8 +52,8 @@ We propose 2 alternatives to run the `prover_server` below.
 ##### Fetch the prover_server image (recommended)
 
 ```bash
-#docker pull clearmatics/zeth-prover:latest
-#docker run -ti -p 50051:50051 --name prover zeth-prover:latest prover_server
+docker pull clearmatics/zeth-base:latest //zeth-prover가 아니라 zeth-base임
+docker run -ti -p 50051:50051 --name prover zeth-base:latest prover_server
 ```
 
 ##### Build and run the prover_server in the development container
@@ -126,7 +126,7 @@ npm run testrpc
 # package.json 파일의 testrpc 경로를 local 경로로 잡아줘야 함. (zeth 에서 제공하는 custom ganache-cli가 작동하지 않는 것으로 보임)
 # ex) "testrpc": "node /usr/local/lib/node_modules/ganache-cli/cli.js --hardfork istanbul --port 8545 --gasLimit 0x3FFFFFFFFFFFF --gasPrice 1 --defaultBalanceEther 90000000000 --networkId 1234",
 # 만약 ganache-cli 가 없다면
-npm install -g ganache-cli
+npm install -g ganache-cli // mac에서는 sudo npm install -g ganache-cli 를 해 주어야 한다.
 
 ```
 
