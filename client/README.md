@@ -68,7 +68,9 @@ Ensure that the following are installed:
 - Python 3.7 (See `python --version`)
 - [venv](https://docs.python.org/3/library/venv.html#module-venv) module.
 - gcc
-- cmake 설치되어 있어야 함. brew install cmake
+- cmake 설치되어 있어야 함. brew install cmake (맥에서)
+- brew tap ethereum/ethereum (맥에서)
+- brew install solidity (맥에서)
 
 Execute the following inside the `client` directory.
 ```console
