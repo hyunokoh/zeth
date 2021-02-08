@@ -52,15 +52,16 @@ We propose 2 alternatives to run the `prover_server` below.
 ##### Fetch the prover_server image (recommended)
 
 ```bash
-docker pull clearmatics/zeth-prover:latest
-docker run -ti -p 50051:50051 --name prover zeth-prover:latest prover_server
+#docker pull clearmatics/zeth-prover:latest
+#docker run -ti -p 50051:50051 --name prover zeth-prover:latest prover_server
 ```
 
 ##### Build and run the prover_server in the development container
 
 ```bash
 # Clone this repository:
-git clone git@github.com:clearmatics/zeth.git
+# git clone git@github.com:clearmatics/zeth.git
+git clone https://github.com/hyunokoh/zeth.git
 cd zeth
 
 # Build the zeth-dev image
