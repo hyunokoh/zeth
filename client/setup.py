@@ -65,5 +65,6 @@ setup(
         "test_commands/test_erc_token_mixing.py",
         "zeth/helper/zeth_helper",
         "zeth/cli/zeth",
+        "zeth/cli/zklay",
     ]
 )
