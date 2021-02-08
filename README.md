@@ -19,10 +19,10 @@ It follows and extends the design presented in [zerocash-ethereum](https://githu
 ### Environment
 
 In order to follow the README below, you will need:
-- [Docker](https://www.docker.com/get-started)
+- [Docker](https://www.docker.com/get-started) : 한번은 직접 수행해 주어야 함
 - [Npm](https://www.npmjs.com/get-npm) (at least version `6.9.0`)
-- [Node](https://nodejs.org/en/) (recommended version `v10` to be able to build and use the custom `ganache-cli`)
-- [Python3](https://www.python.org/downloads/) (at least version `3.7`)
+- # [Node](https://nodejs.org/en/) (recommended version `v10` to be able to build and use the custom `ganache-cli`)
+- [Python3](https://www.python.org/downloads/) (at least version `3.8.2`)
 - [Pip](https://pip.pypa.io/en/stable/) (at least version `19.0.2`)
 
 Additionally, several tools from the GCC and LLVM tools suite are used to improve code quality and generate the documentation of the project. These are required in order to compile the project with all options enabled:
