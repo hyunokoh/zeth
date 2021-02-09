@@ -231,6 +231,22 @@ $ zeth gen-address
 $ cp zeth-address.pub <destination>
 ```
 
+## Zklay Auditor setup
+```console
+# Create a clean directory for the deployer
+(env)$ mkdir auditor
+(env)$ cd auditor
+
+# Specify an eth-address file for an (unlocked) Ethereum account
+(env)$ echo 0x.... > eth-address
+
+# Compile and deploy
+(env)$ zklay audit-key-gen
+
+# Share the instance file with all clients
+# $ cp zeth-instance <destination>
+```
+
 With these files in place, `zeth` commands invoked from inside this directory
 can perform actions on behalf of Alice.  We call this Alice's *client directory*
 below, and assume that all commands are executed in a directory with these
