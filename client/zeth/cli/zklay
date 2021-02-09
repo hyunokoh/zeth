@@ -8,16 +8,16 @@
 
 from zeth.cli.constants import \
     PROVER_SERVER_ENDPOINT_DEFAULT, PROVER_CONFIGURATION_FILE_DEFAULT, \
-    INSTANCE_FILE_DEFAULT, ZETH_SECRET_ADDRESS_FILE_DEFAULT, WALLET_DIR_DEFAULT, \
+    INSTANCE_FILE_DEFAULT, ZETH_SECRET_ADDRESS_FILE_DEFAULT, ZKLAY_AUDIT_SECRET_ADDRESS_FILE_DEFAULT, WALLET_DIR_DEFAULT, \
     ETH_NETWORK_FILE_DEFAULT, ETH_NETWORK_DEFAULT
 from zeth.cli.utils import ClientConfig
 from zeth.cli.zeth_deploy import deploy
 from zeth.cli.zeth_gen_address import gen_address
+from zeth.cli.zklay_audit_key_gen import audit_key_gen
 from zeth.cli.zeth_sync import sync
 from zeth.cli.zeth_mix import mix
 from zeth.cli.zeth_ls_notes import ls_notes
 from zeth.cli.zeth_ls_commits import ls_commits
-from zeth.cli.zklay_audit_key_gen import audit_key_gen
 from zeth.cli.zeth_sync import sync
 from click import group, command, option, pass_context, ClickException, Context
 from click_default_group import DefaultGroup  # type: ignore
@@ -60,17 +60,22 @@ def help(ctx: Context) -> None:
     default=ZETH_SECRET_ADDRESS_FILE_DEFAULT,
     help=f"Zeth zecret address file (default={ZETH_SECRET_ADDRESS_FILE_DEFAULT})")
 @option(
+    "--audit-address-file",
+    default=ZKLAY_AUDIT_SECRET_ADDRESS_FILE_DEFAULT,
+    help=f"Zklay auditor zecret address file (default={ZKLAY_AUDIT_SECRET_ADDRESS_FILE_DEFAULT})")
+@option(
     "--wallet-dir",
     default=WALLET_DIR_DEFAULT,
     help=f"Wallet directory (default={WALLET_DIR_DEFAULT})")
 @pass_context
-def zeth(
+def zklay(
         ctx: Context,
         eth_network: Optional[str],
         prover_server: str,
         prover_config_file: str,
         instance_file: str,
         address_file: str,
+        audit_address_file: str,
         wallet_dir: str) -> None:
     if ctx.invoked_subcommand == "help":
         ctx.invoke(help)
@@ -81,18 +86,19 @@ def zeth(
         prover_config_file=prover_config_file,
         instance_file=instance_file,
         address_file=address_file,
+        audit_address_file=audit_address_file,
         wallet_dir=wallet_dir)
 
 
-zeth.add_command(deploy)
-zeth.add_command(gen_address)
-zeth.add_command(sync)
-zeth.add_command(mix)
-zeth.add_command(ls_notes)
-zeth.add_command(ls_commits)
-zeth.add_command(help)
-zeth.add_command(audit_key_gen)
+zklay.add_command(deploy)
+zklay.add_command(gen_address)
+zklay.add_command(audit_key_gen)
+zklay.add_command(sync)
+zklay.add_command(mix)
+zklay.add_command(ls_notes)
+zklay.add_command(ls_commits)
+zklay.add_command(help)
 
 
 if __name__ == "__main__":
-    zeth()  # pylint: disable=no-value-for-parameter
+    zklay()  # pylint: disable=no-value-for-parameter
