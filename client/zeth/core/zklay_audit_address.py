@@ -17,10 +17,10 @@ from typing import Dict, Any
 
 class AuditAddressPub:
     """
-    Public AuditAddress.  addr_pk = (k_pk)
+    Public AuditAddress.  addr_pk = (addr_pk)
     """
-    def __init__(self, k_pk: EncryptionPublicKey):
-        self.k_pk: EncryptionPublicKey = k_pk
+    def __init__(self, addr_pk: EncryptionPublicKey):
+        self.addr_pk: EncryptionPublicKey = addr_pk
 
     def __str__(self) -> str:
         """
@@ -29,24 +29,24 @@ class AuditAddressPub:
         with fixed length, but a separator provides some limited sanity
         checking).
         """
-        k_pk_hex = encryption_public_key_as_hex(self.k_pk)
-        return f"{k_pk_hex}"
+        addr_pk_hex = encryption_public_key_as_hex(self.addr_pk)
+        return f"{addr_pk_hex}"
 
     @staticmethod
     def parse(key_hex: str) -> AuditAddressPub:
-        owner_enc = key_hex.split(":")
-        if len(owner_enc) != 1:
-            raise Exception("invalid JoinSplitPublicKey format")
-        k_pk = encryption_public_key_from_hex(owner_enc[0])
-        return AuditAddressPub(k_pk)
+        #owner_enc = key_hex.split(":")
+        #if len(owner_enc) != 1:
+        #    raise Exception("invalid JoinSplitPublicKey format")
+        addr_pk = encryption_public_key_from_hex(key_hex)
+        return AuditAddressPub(addr_pk)
 
 
 class AuditAddressPriv:
     """
-    Secret AuditAddress. addr_sk = (k_sk)
+    Secret AuditAddress. addr_sk = (addr_sk)
     """
-    def __init__(self, k_sk: EncryptionSecretKey):
-        self.k_sk: EncryptionSecretKey = k_sk
+    def __init__(self, addr_sk: EncryptionSecretKey):
+        self.addr_sk: EncryptionSecretKey = addr_sk
 
     def to_json(self) -> str:
         return json.dumps(self._to_json_dict())
@@ -57,13 +57,13 @@ class AuditAddressPriv:
 
     def _to_json_dict(self) -> Dict[Any]:
         return {
-            "k_sk": encryption_secret_key_as_hex(self.k_sk),
+            "addr_sk": encryption_secret_key_as_hex(self.addr_sk),
         }
 
     @staticmethod
     def _from_json_dict(key_dict: Dict[str, Any]) -> AuditAddressPriv:
         return AuditAddressPriv(
-            encryption_secret_key_from_hex(key_dict["k_sk"]))
+            encryption_secret_key_from_hex(key_dict["addr_sk"]))
 
 
 class AuditAddress:
@@ -72,10 +72,10 @@ class AuditAddress:
     """
     def __init__(
             self,
-            k_pk: EncryptionPublicKey,
-            k_sk: EncryptionSecretKey):
-        self.addr_pk = AuditAddressPub(k_pk)
-        self.addr_sk = AuditAddressPriv(k_sk)
+            addr_pk: EncryptionPublicKey,
+            addr_sk: EncryptionSecretKey):
+        self.addr_pk = AuditAddressPub(addr_pk)
+        self.addr_sk = AuditAddressPriv(addr_sk)
 
     @staticmethod
     def from_key_pairs(
@@ -89,7 +89,7 @@ class AuditAddress:
             js_secret: AuditAddressPriv,
             js_public: AuditAddressPub) -> AuditAddress:
         return AuditAddress(
-            js_public.k_pk, js_secret.k_sk)
+            js_public.addr_pk, js_secret.addr_sk)
 
 
 def generate_audit_address() -> AuditAddress:

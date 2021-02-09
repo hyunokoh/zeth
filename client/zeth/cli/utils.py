@@ -1,4 +1,5 @@
 # Copyright (c) 2015-2020 Clearmatics Technologies Ltd
+# Copyright (c) 2021-2021 Zkrypto Inc.
 #
 # SPDX-License-Identifier: LGPL-3.0+
 
@@ -8,6 +9,7 @@ from zeth.cli.constants import WALLET_USERNAME, ETH_ADDRESS_DEFAULT, \
     ETH_NETWORK_FILE_DEFAULT, ETH_NETWORK_DEFAULT, \
     ZETH_PUBLIC_ADDRESS_FILE_DEFAULT
 from zeth.core.zeth_address import ZethAddressPub, ZethAddressPriv, ZethAddress
+from zeth.core.zklay_audit_address import AuditAddressPub
 from zeth.core.contracts import \
     InstanceDescription, get_block_number, compile_files
 from zeth.core.mimc import get_tree_hash_for_pairing
@@ -72,12 +74,14 @@ class ClientConfig:
             prover_config_file: str,
             instance_file: str,
             address_file: str,
+            audit_address_file: str,
             wallet_dir: str):
         self.eth_network = eth_network
         self.prover_server_endpoint = prover_server_endpoint
         self.prover_config_file = prover_config_file
         self.instance_file = instance_file
         self.address_file = address_file
+        self.audit_address_file = audit_address_file
         self.wallet_dir = wallet_dir
 
 
@@ -193,6 +197,12 @@ def load_mixer_description_from_ctx(ctx: ClientConfig) -> MixerDescription:
 def get_zeth_address_file(ctx: ClientConfig) -> str:
     return ctx.address_file
 
+def get_zklay_address_file(ctx: ClientConfig) -> str:
+    return ctx.address_file
+
+def get_zklay_audit_address_file(ctx: ClientConfig) -> str:
+    return ctx.audit_address_file
+
 
 def load_zeth_address_public(ctx: ClientConfig) -> ZethAddressPub:
     """
@@ -203,6 +213,23 @@ def load_zeth_address_public(ctx: ClientConfig) -> ZethAddressPub:
     with open(pub_addr_file, "r") as pub_addr_f:
         return ZethAddressPub.parse(pub_addr_f.read())
 
+def load_zklay_address_public(ctx: ClientConfig) -> ZklayAddressPub:
+    """
+    Load a ZklayAddressPub from a key file.
+    """
+    secret_key_file = get_zklay_address_file(ctx)
+    pub_addr_file = pub_address_file(secret_key_file)
+    with open(pub_addr_file, "r") as pub_addr_f:
+        return ZklayAddressPub.parse(pub_addr_f.read())
+
+def load_zklay_audit_address_public(ctx: ClientConfig) -> AuditAddressPub:
+    """
+    Load a AuditAddressPub from a key file.
+    """
+    secret_key_file = get_zklay_audit_address_file(ctx)
+    pub_addr_file = pub_address_file(secret_key_file)
+    with open(pub_addr_file, "r") as pub_addr_f:
+        return AuditAddressPub.parse(pub_addr_f.read())
 
 def write_zeth_address_public(
         pub_addr: ZethAddressPub, pub_addr_file: str) -> None:
@@ -212,6 +239,21 @@ def write_zeth_address_public(
     with open(pub_addr_file, "w") as pub_addr_f:
         pub_addr_f.write(str(pub_addr))
 
+def write_zklay_address_public(
+        pub_addr: ZklayAddressPub, pub_addr_file: str) -> None:
+    """
+    Write a ZklayAddressPub to a file
+    """
+    with open(pub_addr_file, "w") as pub_addr_f:
+        pub_addr_f.write(str(pub_addr))
+
+def write_zklay_audit_address_public(
+        pub_addr: AuditAddressPub, pub_addr_file: str) -> None:
+    """
+    Write a AuditAddressPub to a file
+    """
+    with open(pub_addr_file, "w") as pub_addr_f:
+        pub_addr_f.write(str(pub_addr))
 
 def load_zeth_address_secret(ctx: ClientConfig) -> ZethAddressPriv:
     """
@@ -221,11 +263,35 @@ def load_zeth_address_secret(ctx: ClientConfig) -> ZethAddressPriv:
     with open(addr_file, "r") as addr_f:
         return ZethAddressPriv.from_json(addr_f.read())
 
+def load_zklay_audit_address_secret(ctx: ClientConfig) -> AuditAddressPriv:
+    """
+    Read AuditAddressPriv
+    """
+    addr_file = get_zklay_audit_address_file(ctx)
+    with open(addr_file, "r") as addr_f:
+        return AuditAddressPriv.from_json(addr_f.read())
+
 
 def write_zeth_address_secret(
         secret_addr: ZethAddressPriv, addr_file: str) -> None:
     """
     Write ZethAddressPriv to file
+    """
+    with open(addr_file, "w") as addr_f:
+        addr_f.write(secret_addr.to_json())
+
+def write_zklay_address_secret(
+        secret_addr: ZklayAddressPriv, addr_file: str) -> None:
+    """
+    Write ZklayAddressPriv to file
+    """
+    with open(addr_file, "w") as addr_f:
+        addr_f.write(secret_addr.to_json())
+
+def write_zklay_audit_address_secret(
+        secret_addr: AuditAddressPriv, addr_file: str) -> None:
+    """
+    Write AuditAddressPriv to file
     """
     with open(addr_file, "w") as addr_f:
         addr_f.write(secret_addr.to_json())
@@ -239,6 +305,24 @@ def load_zeth_address(ctx: ClientConfig) -> ZethAddress:
     return ZethAddress.from_secret_public(
         load_zeth_address_secret(ctx),
         load_zeth_address_public(ctx))
+
+def load_zklay_address(ctx: ClientConfig) -> ZethAddress:
+    """
+    Load a ZklayAddress secret from a file, and the associated public address,
+    and return as a ZklayAddress.
+    """
+    return ZklayAddress.from_secret_public(
+        load_zklay_address_secret(ctx),
+        load_zklay_address_public(ctx))
+
+def load_zklay_audit_address(ctx: ClientConfig) -> ZklayAuditAddress:
+    """
+    Load a ZklayAuditAddress secret from a file, and the associated public address,
+    and return as a ZklayAuditAddress.
+    """
+    return ZklayAuditAddress.from_secret_public(
+        load_zklay_audit_address_secret(ctx),
+        load_zklay_audit_address_public(ctx))
 
 
 def open_wallet(
