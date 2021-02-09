@@ -8,11 +8,11 @@
 
 from zeth.cli.constants import \
     PROVER_SERVER_ENDPOINT_DEFAULT, PROVER_CONFIGURATION_FILE_DEFAULT, \
-    INSTANCE_FILE_DEFAULT, ZETH_SECRET_ADDRESS_FILE_DEFAULT, ZKLAY_AUDIT_SECRET_ADDRESS_FILE_DEFAULT, WALLET_DIR_DEFAULT, \
+    INSTANCE_FILE_DEFAULT, ZKLAY_SECRET_ADDRESS_FILE_DEFAULT, ZKLAY_AUDIT_SECRET_ADDRESS_FILE_DEFAULT, WALLET_DIR_DEFAULT, \
     ETH_NETWORK_FILE_DEFAULT, ETH_NETWORK_DEFAULT
 from zeth.cli.utils import ClientConfig
 from zeth.cli.zeth_deploy import deploy
-from zeth.cli.zeth_gen_address import gen_address
+from zeth.cli.zklay_gen_address import gen_address
 from zeth.cli.zklay_audit_key_gen import audit_key_gen
 from zeth.cli.zeth_sync import sync
 from zeth.cli.zeth_mix import mix
@@ -57,8 +57,8 @@ def help(ctx: Context) -> None:
     help=f"Instance file (default={INSTANCE_FILE_DEFAULT})")
 @option(
     "--address-file",
-    default=ZETH_SECRET_ADDRESS_FILE_DEFAULT,
-    help=f"Zeth zecret address file (default={ZETH_SECRET_ADDRESS_FILE_DEFAULT})")
+    default=ZKLAY_SECRET_ADDRESS_FILE_DEFAULT,
+    help=f"Zklay zecret address file (default={ZKLAY_SECRET_ADDRESS_FILE_DEFAULT})")
 @option(
     "--audit-address-file",
     default=ZKLAY_AUDIT_SECRET_ADDRESS_FILE_DEFAULT,
