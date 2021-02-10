@@ -65,7 +65,7 @@ git clone https://github.com/hyunokoh/zeth.git
 cd zeth
 
 # Build the zklay-dev image
-docker build -f Dockerfile-dev -t zklay-dev .
+docker build -f Dockerfile-base -t zklay-dev .
 # Start the zklay development container
 docker run -ti -p 50051:50051 --name zklay zklay-dev:latest
 
