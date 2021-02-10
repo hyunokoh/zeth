@@ -12,6 +12,7 @@ from zeth.core.zeth_address import ZethAddressPub, ZethAddressPriv, ZethAddress
 from zeth.core.zklay_audit_address import AuditAddressPub
 from zeth.core.contracts import \
     InstanceDescription, get_block_number, compile_files
+from zeth.core.zklay_wallet import ZklayNoteDescription, ZklayWallet
 from zeth.core.mimc import get_tree_hash_for_pairing
 from zeth.core.prover_client import ProverClient
 from zeth.core.pairing import PairingParameters
@@ -338,6 +339,18 @@ def open_wallet(
     return Wallet(
         mixer_instance, WALLET_USERNAME, wallet_dir, js_secret, tree_hash)
 
+def open_zklay_wallet(
+        mixer_instance: Any,
+        js_secret: ZklayAddressPriv,
+        ctx: ClientConfig) -> Wallet:
+    """
+    Load a wallet using a secret key.
+    """
+    wallet_dir = ctx.wallet_dir
+    prover_config = create_prover_client(ctx).get_configuration()
+    tree_hash = get_tree_hash_for_pairing(prover_config.pairing_parameters.name)
+    return ZklayWallet(
+        mixer_instance, WALLET_USERNAME, wallet_dir, js_secret, tree_hash)
 
 def do_sync(
         web3: Any,
