@@ -52,8 +52,8 @@ We propose 2 alternatives to run the `prover_server` below.
 ##### Fetch the prover_server image (recommended)
 
 ```bash
-docker pull clearmatics/zeth-base:latest //zeth-prover가 아니라 zeth-base임
-docker run -ti -p 50051:50051 --name prover zeth-base:latest prover_server
+docker pull hyunokoh/zklay-prover:latest //mac용으로 zklay-prover image를 docker-hub에 등록하였음
+docker run -ti -p 50051:50051 hyunokoh/zklay-prover:latest prover_server
 ```
 
 ##### Build and run the prover_server in the development container
