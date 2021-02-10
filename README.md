@@ -64,14 +64,14 @@ docker run -ti -p 50051:50051 --name prover zeth-base:latest prover_server
 git clone https://github.com/hyunokoh/zeth.git
 cd zeth
 
-# Build the zeth-dev image
-docker build -f Dockerfile-dev -t zeth-dev .
-# Start the zeth development container
-docker run -ti -p 50051:50051 --name zeth zeth-dev:latest
+# Build the zklay-dev image
+docker build -f Dockerfile-dev -t zklay-dev .
+# Start the zklay development container
+docker run -ti -p 50051:50051 --name zklay zklay-dev:latest
 
 # 이미 생성된 도커 이미지를 실행 시키기 위한 명령어
-docker start zeth
-docker attatch zeth
+docker start zklay
+docker attatch zklay
 
 # All the commands below are run in the docker container
 # Configure your environment
