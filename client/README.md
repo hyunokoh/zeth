@@ -70,7 +70,7 @@ Ensure that the following are installed:
 - gcc
 - cmake 설치되어 있어야 함. brew install cmake (맥에서)
 - brew tap ethereum/ethereum (맥에서)
-- brew install solidity (맥에서)
+- brew install solidity@5 (맥에서)
 
 Execute the following inside the `client` directory.
 ```console
