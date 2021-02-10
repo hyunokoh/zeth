@@ -64,8 +64,8 @@ docker run -ti -p 50051:50051 --name prover zeth-base:latest prover_server
 git clone https://github.com/hyunokoh/zeth.git
 cd zeth
 
-# Build the zklay-dev image
-docker build -f Dockerfile-base -t zklay-dev .
+# Build the zklay-dev image. depends/ganache를 제거하면 docker build가 mac에서 잘 된다.
+docker build -f Dockerfile-dev -t zklay-dev .
 # Start the zklay development container
 docker run -ti -p 50051:50051 --name zklay zklay-dev:latest
 
