@@ -2,7 +2,8 @@
 #
 # SPDX-License-Identifier: LGPL-3.0+
 
-from zeth.core.zklay_address import generate_audit_address, generate_zklay_address
+from zeth.core.zklay_address import generate_zklay_address
+from zeth.core.zklay_audit_address import generate_audit_address
 from zeth.cli.utils import get_zklay_audit_address_file, pub_address_file, \
     write_zklay_audit_address_secret, write_zklay_audit_address_public
 from click import command, pass_context, ClickException, Context
