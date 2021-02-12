@@ -1,0 +1,25 @@
+FROM clearmatics/zeth-base:latest AS stage1
+
+ENV ZKLAY_PATH=/home/zklay
+# Copy necessary files in the docker container
+COPY . ${ZKLAY_PATH}
+
+# Install the submodules
+RUN cd ${ZKLAY_PATH} \
+    && git submodule update --init --recursive
+
+# Build `prover_server`
+RUN cd ${ZKLAY_PATH} \
+    && mkdir build \
+    && cd build \
+    && cmake -DMPC=OFF -DSTATIC_BUILD=ON -DCMAKE_BUILD_TYPE=Release .. \
+    && make
+#    && make -j"$($(nprocs)+1)" prover_server
+
+##
+
+FROM alpine:3.12
+RUN apk add --no-cache bash
+## Move `prover_server` from previous image and put it in the PATH
+COPY --from=stage1 /home/zklay/build/prover_server/prover_server /usr/local/bin
+CMD ["/bin/bash"]
