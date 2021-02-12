@@ -209,27 +209,7 @@ an `eth-address` file mentioned above, where the address has sufficient funds.
 $ cp zeth-instance <destination>
 ```
 
-## User setup
 
-To set up her client, Alice must setup all client files mentioned above:
-```console
-# Create a clean client directory
-$ mkdir alice
-$ cd alice
-
-# Specify an eth-address file for an (unlocked) Ethereum account
-$ echo 0x.... > eth-address
-
-# Copy the instance file (received from the deployer)
-$ cp <shared-instance-file> zeth-instance
-
-# Generate new Zeth Address with secret (zeth-address.priv) and
-# public address (zeth-address.pub)
-$ zeth gen-address
-
-# Share the public address with other users
-$ cp zeth-address.pub <destination>
-```
 
 ## Zklay Auditor setup
 ```console
@@ -244,8 +224,33 @@ $ cp zeth-address.pub <destination>
 (env)$ zklay audit-key-gen
 
 # Share the instance file with all clients
-# $ cp zeth-instance <destination>
+# $ cp audit-address.pub <destination>
 ```
+
+## User setup
+To set up her client, Alice must setup all client files mentioned above:
+```console
+# Create a clean client directory
+$ mkdir alice
+$ cd alice
+
+# Specify an eth-address file for an (unlocked) Ethereum account
+$ echo 0x.... > eth-address
+
+# Copy the instance file (received from the deployer)
+$ cp <shared-instance-file> zeth-instance
+
+# Copy the audit public key file (received from the auditor)
+$ cp <shared-instance-file> audit-address.pub
+
+# Generate new Zklay Address with secret (zklay-address.priv) and
+# public address (zklay-address.pub)
+$ zklay gen-address
+
+# Share the public address with other users
+$ cp zklay-address.pub <destination>
+```
+
 
 With these files in place, `zeth` commands invoked from inside this directory
 can perform actions on behalf of Alice.  We call this Alice's *client directory*
