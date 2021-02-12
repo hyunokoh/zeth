@@ -244,7 +244,7 @@ $ cp zeth-address.pub <destination>
 (env)$ zklay audit-key-gen
 
 # Share the instance file with all clients
-# $ cp zeth-instance <destination>
+# $ cp audit-address.pub <destination>
 ```
 
 With these files in place, `zeth` commands invoked from inside this directory
