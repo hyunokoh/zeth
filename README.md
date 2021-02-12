@@ -52,8 +52,8 @@ We propose 2 alternatives to run the `prover_server` below.
 ##### Fetch the prover_server image (recommended)
 
 ```bash
-docker pull clearmatics/zeth-base:latest //zeth-prover가 아니라 zeth-base임
-docker run -ti -p 50051:50051 --name prover zeth-base:latest prover_server
+docker pull hyunokoh/zklay-prover:latest //mac용으로 zklay-prover image를 docker-hub에 등록하였음
+docker run -ti -p 50051:50051 hyunokoh/zklay-prover:latest prover_server
 ```
 
 ##### Build and run the prover_server in the development container
@@ -64,14 +64,14 @@ docker run -ti -p 50051:50051 --name prover zeth-base:latest prover_server
 git clone https://github.com/hyunokoh/zeth.git
 cd zeth
 
-# Build the zeth-dev image
-docker build -f Dockerfile-dev -t zeth-dev .
-# Start the zeth development container
-docker run -ti -p 50051:50051 --name zeth zeth-dev:latest
+# Build the zklay-dev image. depends/ganache를 제거하면 docker build가 mac에서 잘 된다.
+docker build -f Dockerfile-dev -t zklay-dev .
+# Start the zklay development container
+docker run -ti -p 50051:50051 --name zklay zklay-dev:latest
 
 # 이미 생성된 도커 이미지를 실행 시키기 위한 명령어
-docker start zeth
-docker attatch zeth
+docker start zklay
+docker attatch zklay
 
 # All the commands below are run in the docker container
 # Configure your environment
