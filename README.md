@@ -56,6 +56,18 @@ docker pull hyunokoh/zklay-prover:latest //mac용으로 zklay-prover image를 do
 docker run -ti -p 50051:50051 hyunokoh/zklay-prover:latest prover_server
 ```
 
+##### How to build a prover_server image
+
+```bash
+# Clone this repository:
+git clone https://github.com/hyunokoh/zeth.git
+cd zeth
+
+# Build the zklay-prover image. depends/ganache를 제거하면 docker build가 mac에서 잘 된다.
+docker build -f Dockerfile-zklay-prover -t zklay-prover .
+```
+
+
 ##### Build and run the prover_server in the development container
 
 ```bash
