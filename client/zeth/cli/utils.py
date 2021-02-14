@@ -8,7 +8,8 @@ from zeth.cli.constants import WALLET_USERNAME, ETH_ADDRESS_DEFAULT, \
     ETH_PRIVATE_KEY_FILE_DEFAULT, ETH_RPC_ENDPOINT_DEFAULTS, \
     ETH_NETWORK_FILE_DEFAULT, ETH_NETWORK_DEFAULT, \
     ZETH_PUBLIC_ADDRESS_FILE_DEFAULT
-from zeth.core.zeth_address import ZethAddressPub, ZethAddressPriv, ZethAddress
+#from zeth.core.zeth_address import ZethAddressPub, ZethAddressPriv, ZethAddress
+from zeth.core.zklay_address import ZklayAddressPub, ZklayAddressPriv, ZklayAddress
 from zeth.core.zklay_audit_address import AuditAddressPub
 from zeth.core.contracts import \
     InstanceDescription, get_block_number, compile_files
@@ -16,7 +17,7 @@ from zeth.core.zklay_wallet import ZklayNoteDescription, ZklayWallet
 from zeth.core.mimc import get_tree_hash_for_pairing
 from zeth.core.prover_client import ProverClient
 from zeth.core.pairing import PairingParameters
-from zeth.core.mixer_client import MixerClient, get_mix_results
+from zeth.core.zklay_client import MixerClient, get_mix_results
 from zeth.core.utils import \
     open_web3, short_commitment, EtherValue, get_zeth_dir, from_zeth_units
 from zeth.core.wallet import ZethNoteDescription, Wallet
@@ -72,14 +73,18 @@ class ClientConfig:
             self,
             eth_network: Optional[str],
             prover_server_endpoint: str,
+            balance_prover_server_endpoint: str,
             prover_config_file: str,
+            balance_prover_config_file: str,
             instance_file: str,
             address_file: str,
             audit_address_file: str,
             wallet_dir: str):
         self.eth_network = eth_network
         self.prover_server_endpoint = prover_server_endpoint
+        self.balance_prover_server_endpoint = prover_server_endpoint
         self.prover_config_file = prover_config_file
+        self.balance_prover_config_file = prover_config_file
         self.instance_file = instance_file
         self.address_file = address_file
         self.audit_address_file = audit_address_file
@@ -190,6 +195,12 @@ def load_mixer_description(mixer_description_file: str) -> MixerDescription:
     with open(mixer_description_file, "r") as desc_f:
         return MixerDescription.from_json(desc_f.read())
 
+def load_zklay_description(mixer_description_file: str) -> MixerDescription:
+    """
+    Return mixer and token (if present) contract instances
+    """
+    with open(mixer_description_file, "r") as desc_f:
+        return MixerDescription.from_json(desc_f.read())
 
 def load_mixer_description_from_ctx(ctx: ClientConfig) -> MixerDescription:
     return load_mixer_description(ctx.instance_file)
@@ -264,6 +275,14 @@ def load_zeth_address_secret(ctx: ClientConfig) -> ZethAddressPriv:
     with open(addr_file, "r") as addr_f:
         return ZethAddressPriv.from_json(addr_f.read())
 
+def load_zklay_address_secret(ctx: ClientConfig) -> ZklayAddressPriv:
+    """
+    Read ZklayAddressPriv
+    """
+    addr_file = get_zklay_address_file(ctx)
+    with open(addr_file, "r") as addr_f:
+        return ZklayAddressPriv.from_json(addr_f.read())
+
 def load_zklay_audit_address_secret(ctx: ClientConfig) -> AuditAddressPriv:
     """
     Read AuditAddressPriv
@@ -307,7 +326,7 @@ def load_zeth_address(ctx: ClientConfig) -> ZethAddress:
         load_zeth_address_secret(ctx),
         load_zeth_address_public(ctx))
 
-def load_zklay_address(ctx: ClientConfig) -> ZethAddress:
+def load_zklay_address(ctx: ClientConfig) -> ZklayAddress:
     """
     Load a ZklayAddress secret from a file, and the associated public address,
     and return as a ZklayAddress.
@@ -439,6 +458,12 @@ def create_prover_client(ctx: ClientConfig) -> ProverClient:
     return ProverClient(
         ctx.prover_server_endpoint, ctx.prover_config_file)
 
+def create_balance_prover_client(ctx: ClientConfig) -> ProverClient:
+    """
+    Create a balance prover client using the settings from the commands context.
+    """
+    return ProverClient(
+        ctx.balance_prover_server_endpoint, ctx.balance_prover_config_file)
 
 def create_mixer_client(
         ctx: ClientConfig,
@@ -465,6 +490,22 @@ def create_mixer_client_and_mixer_desc(
     prover_config = prover_client.get_configuration()
     mixer_client = MixerClient(web3, prover_config, mixer_instance)
     return (mixer_client, mixer_desc)
+
+def create_zklay_client_and_zklay_desc(
+        ctx: ClientConfig,
+        prover_client: Optional[ProverClient] = None
+) -> Tuple[MixerClient, MixerDescription]:
+    """
+    Create a MixerClient and MixerDescription object, for an existing deployment.
+    """
+    web3 = open_web3_from_ctx(ctx)
+    zklay_desc = load_mixer_description_from_ctx(ctx)
+    zklay_instance = zklay_desc.mixer.instantiate(web3)
+    if prover_client is None:
+        prover_client = create_prover_client(ctx)
+    prover_config = prover_client.get_configuration()
+    zklay_client = MixerClient(web3, prover_config, zklay_instance)
+    return (zklay_client, zklay_desc)
 
 
 def zeth_note_short(note_desc: ZethNoteDescription) -> str:

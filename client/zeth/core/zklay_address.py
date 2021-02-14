@@ -43,8 +43,8 @@ class ZklayAddressPub:
         owner_enc = key_hex.split(":")
         if len(owner_enc) != 4:
             raise Exception("invalid JoinSplitPublicKey format")
-        a_pk = ownership_public_key_from_hex(owner_enc[0])
-        b_pk = ownership_public_key_from_hex(owner_enc[1])
+        a_pk = encryption_public_key_from_hex(owner_enc[0])
+        b_pk = encryption_public_key_from_hex(owner_enc[1])
         u_pk = encryption_public_key_from_hex(owner_enc[2])
         h_pk = encryption_public_key_from_hex(owner_enc[3])
         return ZklayAddressPub(a_pk, b_pk, u_pk, h_pk)
@@ -99,6 +99,16 @@ class ZklayAddress:
             encryption.b_pk,
             encryption.u_pk,
             encryption.h_pk)
+
+    @staticmethod
+    def from_secret_public(
+            js_secret: ZklayAddressPriv,
+            js_public: ZklayAddressPub) -> ZklayAddress:
+        return ZklayAddress(
+            js_secret.addr_sk, js_public.a_pk, js_public.b_pk, js_public.u_pk, js_public.h_pk)
+
+    def zklay_keypair(self) -> ZklayEncryptionKeyPair:
+        return ZklayEncryptionKeyPair(self.addr_sk.addr_sk, self.addr_pk.a_pk, self.addr_pk.b_pk, self.addr_pk.u_pk, self.addr_pk.h_pk)
 
 def generate_zklay_address(audit_pk : AuditAddressPub) -> ZklayAddress:
     encryption_keypair = generate_zklay_encryption_keypair(audit_pk)

@@ -69,7 +69,7 @@ from cryptography.exceptions import InvalidSignature \
 from zeth.core.utils import hex_extend_32bytes, digest_to_binary_string, \
     encode_abi
 from zeth.core.zklay_audit_address import AuditAddressPub
-from zeth.cli.utils import load_zklay_audit_address_public
+#from zeth.cli.utils import load_zklay_audit_address_public
 from Crypto import Random
 from hashlib import blake2s
 from typing import Tuple, NewType

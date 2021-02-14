@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2015-2020 Clearmatics Technologies Ltd
+# Copyright (c) 2021-2021 Zkrypto Inc.
 #
 # SPDX-License-Identifier: LGPL-3.0+
 
 from __future__ import annotations
-from zeth.core.zeth_address import ZethAddressPriv
+from zeth.core.zklay_address import ZklayAddressPriv
 from zeth.core.mixer_client import \
     MixOutputEvents, compute_nullifier, compute_commitment, receive_note
 from zeth.core.proto_utils import zeth_note_from_json_dict, zeth_note_to_json_dict

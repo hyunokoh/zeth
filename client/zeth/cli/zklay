@@ -8,10 +8,11 @@
 
 from zeth.cli.constants import \
     PROVER_SERVER_ENDPOINT_DEFAULT, PROVER_CONFIGURATION_FILE_DEFAULT, \
+    BALANCE_PROVER_SERVER_ENDPOINT_DEFAULT, BALANCE_PROVER_CONFIGURATION_FILE_DEFAULT, \
     INSTANCE_FILE_DEFAULT, ZKLAY_SECRET_ADDRESS_FILE_DEFAULT, ZKLAY_AUDIT_SECRET_ADDRESS_FILE_DEFAULT, WALLET_DIR_DEFAULT, \
     ETH_NETWORK_FILE_DEFAULT, ETH_NETWORK_DEFAULT
 from zeth.cli.utils import ClientConfig
-from zeth.cli.zeth_deploy import deploy
+from zeth.cli.zklay_deploy import deploy
 from zeth.cli.zklay_gen_address import gen_address
 from zeth.cli.zklay_audit_key_gen import audit_key_gen
 from zeth.cli.zklay_deposit import deposit
@@ -48,6 +49,74 @@ def help(ctx: Context) -> None:
     "--prover-server",
     default=PROVER_SERVER_ENDPOINT_DEFAULT,
     help=f"Prover server endpoint (default={PROVER_SERVER_ENDPOINT_DEFAULT})")
+@option(
+    "--balance-prover-server",
+    default=BALANCE_PROVER_SERVER_ENDPOINT_DEFAULT,
+    help=f"Balance prover server endpoint (default={BALANCE_PROVER_SERVER_ENDPOINT_DEFAULT})")
+@option(
+    "--prover-config-file",
+    default=PROVER_CONFIGURATION_FILE_DEFAULT,
+    help=f"Prover config file (default={PROVER_CONFIGURATION_FILE_DEFAULT})")
+@option(
+    "--balance-prover-config-file",
+    default=BALANCE_PROVER_CONFIGURATION_FILE_DEFAULT,
+    help=f"Balance prover config file (default={BALANCE_PROVER_CONFIGURATION_FILE_DEFAULT})")
+@option(
+    "--instance-file",
+    default=INSTANCE_FILE_DEFAULT,
+    help=f"Instance file (default={INSTANCE_FILE_DEFAULT})")
+@option(
+    "--address-file",
+    default=ZKLAY_SECRET_ADDRESS_FILE_DEFAULT,
+    help=f"Zklay zecret address file (default={ZKLAY_SECRET_ADDRESS_FILE_DEFAULT})")
+@option(
+    "--audit-address-file",
+    default=ZKLAY_AUDIT_SECRET_ADDRESS_FILE_DEFAULT,
+    help=f"Zklay auditor zecret address file (default={ZKLAY_AUDIT_SECRET_ADDRESS_FILE_DEFAULT})")
+@option(
+    "--wallet-dir",
+    default=WALLET_DIR_DEFAULT,
+    help=f"Wallet directory (default={WALLET_DIR_DEFAULT})")
+@pass_context
+def zklay(
+        ctx: Context,
+        eth_network: Optional[str],
+        prover_server: str,
+        balance_prover_server: str,
+        prover_config_file: str,
+        balance_prover_config_file: str,
+        instance_file: str,
+        address_file: str,
+        audit_address_file: str,
+        wallet_dir: str) -> None:
+    if ctx.invoked_subcommand == "help":
+        ctx.invoke(help)
+    ctx.ensure_object(dict)
+    ctx.obj = ClientConfig(
+        eth_network=eth_network,
+        prover_server_endpoint=prover_server,
+        balance_prover_server_endpoint=balance_prover_server,
+        prover_config_file=prover_config_file,
+        balance_prover_config_file=balance_prover_config_file,
+        instance_file=instance_file,
+        address_file=address_file,
+        audit_address_file=audit_address_file,
+        wallet_dir=wallet_dir)
+
+
+zklay.add_command(deploy)
+zklay.add_command(gen_address)
+zklay.add_command(audit_key_gen)
+zklay.add_command(deposit)
+zklay.add_command(sync)
+zklay.add_command(mix)
+zklay.add_command(ls_notes)
+zklay.add_command(ls_commits)
+zklay.add_command(help)
+
+
+if __name__ == "__main__":
+    zklay()  # pylint: disable=no-value-for-parameter
 @option(
     "--prover-config-file",
     default=PROVER_CONFIGURATION_FILE_DEFAULT,
