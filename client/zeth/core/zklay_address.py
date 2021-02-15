@@ -64,13 +64,13 @@ class ZklayAddressPriv:
     def from_json(key_json: str) -> ZklayAddressPriv:
         return ZklayAddressPriv._from_json_dict(json.loads(key_json))
 
-    def _to_json_dict(self) -> Dict[Any]:
+    def _to_json_dict(self) -> Dict[str, Any]:
         return {
             "addr_sk": encryption_secret_key_as_hex(self.addr_sk),
         }
 
     @staticmethod
-    def _from_json_dict(key_dict: Dict[Any]) -> ZklayAddressPriv:
+    def _from_json_dict(key_dict: Dict[str, Any]) -> ZklayAddressPriv:
         return ZklayAddressPriv(
             encryption_secret_key_from_hex(key_dict["addr_sk"]))
 
