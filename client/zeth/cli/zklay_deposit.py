@@ -37,8 +37,8 @@ def deposit(
         client_ctx, prover_client)
 
     zklay_address = load_zklay_address(client_ctx)
-    #wallet = open_zklay_wallet(
-    #    zklay_client.mixer_instance, zklay_address.addr_sk, client_ctx)
+    wallet = open_zklay_wallet(
+        zklay_client.mixer_instance, zklay_address.addr_sk, client_ctx)
 
     eth_address = load_eth_address(eth_addr)
     eth_private_key_data = load_eth_private_key(eth_private_key)
@@ -48,12 +48,8 @@ def deposit(
     tx_value = EtherValue(0) if zklay_desc.token else value_pub
 
 
-
-
-
-
     # Create the MixParameters object manually so they can be displayed.
-    deposit_params = zklay_client.create_deposit(prover_client, zklay_address, zklay_priv_address, newCT, oldCT, value_pub)  
+    deposit_params = zklay_client.create_deposit(prover_client, eth_address, eth_private_key_data, zklay_address, value_pub)  
 
     if show_parameters:
         print(f"deposit_params={deposit_params.to_json()}")

@@ -288,6 +288,22 @@ def decrypt(
 
     return message
 
+def decrypt_sym(
+        encrypted_message: bytes,
+        sk: EncryptionSecretKey) -> bytes:
+    """
+    Decrypts an encrypted message using a symmetry key cipher
+    """
+    sk_bytes = encode_encryption_secret_key(sk)
+    sym_key, mac_key = _kdf(sk_bytes, sk_bytes)
+
+    # Decrypt sym ciphertext
+    algorithm = algorithms.ChaCha20(sym_key, _SYM_NONCE_VALUE)
+    cipher = Cipher(algorithm, mode=None, backend=default_backend())
+    decryptor = cipher.decryptor()
+    message = decryptor.update(ct_sym)
+
+    return message
 
 def _exchange(sk: EncryptionSecretKey, pk: EncryptionPublicKey) -> bytes:
     return sk.exchange(pk)  # type: ignore

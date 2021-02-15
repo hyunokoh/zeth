@@ -13,6 +13,7 @@ from zeth.core.ownership import OwnershipPublicKey, OwnershipSecretKey, \
 from zeth.core.encryption import \
     EncryptionPublicKey, EncryptionSecretKey, InvalidSignature, \
     generate_encryption_keypair, encrypt, decrypt
+from zeth.core.zklay_encryption import encode_encryption_public_key, encryption_public_key_as_hex, decrypt_sym
 from zeth.core.merkle_tree import MerkleTree, compute_merkle_path
 from zeth.core.pairing import PairingParameters
 import zeth.core.signing as signing
@@ -316,16 +317,24 @@ class MixerClient:
             tx_value=tx_value)
 
     # zklay deposit from ether (or ERC 20) to encrypted account
-    def create_desposit(
+    def create_deposit(
             self,
             prover_client: ProverClient,
-            zklay_address: ZklayAddress,
-            zklay_priv_address: ZklayPrivAddress,
             sender_eth_address: str,
             sender_eth_private_key: Optional[bytes],
+            zklay_address: ZklayAddress,
             eth_amount: EtherValue,
             tx_value: Optional[EtherValue] = None
     ) -> str:
+      
+        addr = encode_encryption_public_key(zklay_address.addr_pk.a_pk) 
+        account_ct = self.mixer_instance.functions.get_amount_ct(addr)
+        print("==========account ct: ",account_ct)
+        print(account_ct)
+
+        before_amount = decrypt_sym(account_ct, zklay_address.addr_sk)
+        print("-----", before_amount)
+
         call_desc = DepositCallDescription(
             sender_keypair=zklay_address.zklay_keypair(),
             sender_eth_address=sender_eth_address,
@@ -355,7 +364,7 @@ class MixerClient:
             v_out=EtherValue(0),
             tx_value=tx_value)
 
-    def zklay_desposit(
+    def zklay_deposit(
             self,
             prover_client: ProverClient,
             zeth_address: ZethAddress,

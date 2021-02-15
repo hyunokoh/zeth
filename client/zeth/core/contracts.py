@@ -114,7 +114,6 @@ class InstanceDescription:
 def get_block_number(web3: Any) -> int:
     return web3.eth.blockNumber
 
-
 def install_sol() -> None:
     solcx.install_solc(SOL_COMPILER_VERSION)
 
@@ -126,7 +125,6 @@ def compile_files(files: List[str], **kwargs: Any) -> Any:
     """
     solcx.set_solc_version(SOL_COMPILER_VERSION)
     return solcx.compile_files(files, optimize=True, **kwargs)
-
 
 def send_contract_call(
         web3: Any,
@@ -174,7 +172,6 @@ def local_contract_call(
     if gas:
         tx_desc["gas"] = gas
     return call.call(tx_desc)
-
 
 def get_event_logs(
         web3: Any,

@@ -20,6 +20,10 @@ contract ZklayBase is BaseMerkleTree, ERC223ReceivingContract
     // The public list of nullifiers (prevents double spend)
     mapping(bytes32 => bool) private _nullifiers;
 
+    // Structure of the verification key and proofs is opaque, determined by
+    // zk-snark verification library.
+    uint256[] internal _vk;
+
     // Auditor's public key
     uint256 internal _auditor_key;
 
@@ -31,7 +35,7 @@ contract ZklayBase is BaseMerkleTree, ERC223ReceivingContract
     }
 
     // encrypted account
-    mapping(address => EncAccount) private ena;
+    mapping(address => EncAccount) private zklay;
 
     // Contract variable that indicates the address of the token contract
     // If token = address(0) then the mixer works with ether
@@ -45,6 +49,18 @@ contract ZklayBase is BaseMerkleTree, ERC223ReceivingContract
     // JS).
     uint256 internal constant JSIN = 1; // Number of nullifiers
     uint256 internal constant JSOUT = 1; // Number of commitments/ciphertexts
+
+    // ***** not required
+    // Size of the public values in bits
+    uint256 internal constant PUBLIC_VALUE_BITS = 64;
+
+    // Public values mask
+    uint256 internal constant PUBLIC_VALUE_MASK = (1 << PUBLIC_VALUE_BITS) - 1;
+
+    // Total number of bits for public values. Digest residual bits appear
+    // after these.
+    uint256 internal constant TOTAL_PUBLIC_VALUE_BITS = 2 * PUBLIC_VALUE_BITS;
+    // ******
 
     uint256 internal constant DIGEST_LENGTH = 256;
 
@@ -102,6 +118,14 @@ contract ZklayBase is BaseMerkleTree, ERC223ReceivingContract
     ///
     /// Returns the number of input notes, the number of output notes and the
     /// total number of primary inputs.
+    function get_amount_ct(address addr)
+        external
+        view
+        returns (uint256 amount_ct)
+    {
+	amount_ct = zklay[addr].ct;
+    }
+
     function get_constants()
         external
         pure
@@ -118,25 +142,26 @@ contract ZklayBase is BaseMerkleTree, ERC223ReceivingContract
 
     /// These functions transfer klay and tokens
     function deposit(
-        uint256[] proof,
+        uint256[] memory proof,
         address toaddress,
         uint256 amount,
         uint256 ciphertext
-    }
+    )
         public
         payable
     {
-        EncAccount account = map[toaddr];
+        EncAccount memory account = zklay[toaddress];
 
         bytes32 h = sha256(
-            uint256(toaddress), account.ct, ciphertext, amount);
+            abi.encodePacked(uint256(toaddress), account.ct, ciphertext, amount));
 
         // 2.b Verify the balance proof
+/*
         require(
             verify_balance_proof(proof, h),
             "Invalid proof: Unable to verify the balance proof correctly"
         );
-
+*/
         if (_token != address(0)) {
             ERC20 erc20Token = ERC20(_token);
             erc20Token.transferFrom(msg.sender, address(this), amount);
@@ -145,13 +170,13 @@ contract ZklayBase is BaseMerkleTree, ERC223ReceivingContract
         account.ct = ciphertext;
     }
 
-    # TODO: After verifying deposit, we will implement withdraw.
+    // TODO: After verifying deposit, we will implement withdraw.
     function withdraw(
-        uint256[] proof,
+        uint256[] memory proof,
         address fromaddress,
         uint256 amount,
         uint256 ciphertext
-    }
+    )
         public
         payable
     {
@@ -162,30 +187,31 @@ contract ZklayBase is BaseMerkleTree, ERC223ReceivingContract
     /// The `inputs` array is the set of scalar inputs to the proof.
     /// We assume that each input occupies a single uint256.
     function anonTransfer(
-        uint256[] proof,
-        uint256[NUM_INPUTS] inputs,
+        uint256[] memory proof,
+        uint256[NUM_INPUTS] memory inputs,
         uint256 ciphertext
     )
         public
         payable
     {
         // 1. Check the root and  the sn
-        bytes32 memory sn;
-        check_mkroot_nullifiers_hsig_append_nullifiers_state(
-            vk, inputs, sn);
+        bytes32 sn;
+        //check_mkroot_nullifiers_hsig_append_nullifiers_state(
+        //    inputs, sn);
 
         // 2.a Verify the signature on the hash of data_to_be_signed
         bytes32 h = sha256(
-            uint256(_auditor_key), abi.encodePacked(inputs, ciphertext));
+            abi.encodePacked(uint256(_auditor_key), abi.encodePacked(inputs, ciphertext)));
 
         // 2.b Verify the proof
+/*
         require(
             verify_zk_proof(proof, h),
             "Invalid proof: Unable to verify the proof correctly"
         );
 
         // 3. Append the commitments to the tree
-        bytes32 memory commitment;
+        bytes32 commitment;
         assemble_commitments_and_append_to_state(inputs, commitment);
 
         // 4. Add the new root to the list of existing roots
@@ -199,10 +225,10 @@ contract ZklayBase is BaseMerkleTree, ERC223ReceivingContract
             commitment,
             ciphertext
         );
-
+*/
         // 6. Get the public values in Wei and modify the state depending on
         // their values
-        process_public_values(inputs);
+        // process_public_values(inputs);
     }
 
     /// This function is used to reassemble the nullifiers given the nullifier
@@ -285,7 +311,6 @@ contract ZklayBase is BaseMerkleTree, ERC223ReceivingContract
     /// of the mixer contract accordingly. (ie: Appends the commitments to the
     /// tree, appends the nullifiers to the list and so on).
     function check_mkroot_nullifiers_hsig_append_nullifiers_state(
-        uint256[4] memory vk,
         uint256[NUM_INPUTS] memory primary_inputs,
         bytes32[JSIN] memory nfs)
         internal

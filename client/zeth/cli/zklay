@@ -16,11 +16,10 @@ from zeth.cli.zklay_deploy import deploy
 from zeth.cli.zklay_gen_address import gen_address
 from zeth.cli.zklay_audit_key_gen import audit_key_gen
 from zeth.cli.zklay_deposit import deposit
-from zeth.cli.zeth_sync import sync
+from zeth.cli.zklay_sync import sync
 from zeth.cli.zeth_mix import mix
 from zeth.cli.zeth_ls_notes import ls_notes
 from zeth.cli.zeth_ls_commits import ls_commits
-from zeth.cli.zeth_sync import sync
 from click import group, command, option, pass_context, ClickException, Context
 from click_default_group import DefaultGroup  # type: ignore
 from typing import Optional, Any

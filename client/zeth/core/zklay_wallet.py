@@ -74,31 +74,36 @@ class WalletState:
     transaction.
     """
     def __init__(
-            self, next_block: int, num_notes: int, nullifier_map: NullifierMap):
+            self, next_block: int, num_notes: int, nullifier_map: NullifierMap, amount_ct: List[bytes] ):
         self.next_block = next_block
         self.num_notes = num_notes
         self.nullifier_map = nullifier_map
+        self.amount_ct = amount_ct
 
     def to_json(self) -> str:
         json_dict = {
             "next_block": self.next_block,
             "num_notes": self.num_notes,
             "nullifier_map": self.nullifier_map,
+            "amount_ct": self.amount_ct
         }
         return json.dumps(json_dict, indent=4)
 
     @staticmethod
     def from_json(json_str: str) -> WalletState:
         json_dict = json.loads(json_str)
+        amount_ct = [bytes.fromhex(x) for x in json_dict["amount_ct"]]
         return WalletState(
             next_block=int(json_dict["next_block"]),
             num_notes=int(json_dict["num_notes"]),
-            nullifier_map=cast(NullifierMap, json_dict["nullifier_map"]))
+            nullifier_map=cast(NullifierMap, json_dict["nullifier_map"]),
+            #amount_ct=cast(uint256,json_dict["amount_ct"])
+            amount_ct = amount_ct)
 
 
 def _load_state_or_default(state_file: str) -> WalletState:
     if not exists(state_file):
-        return WalletState(1, 0, {})
+        return WalletState(1, 0, {}, {})
     with open(state_file, "r") as state_f:
         return WalletState.from_json(state_f.read())
 
@@ -123,15 +128,14 @@ class ZklayWallet:
             mixer_instance: Any,
             username: str,
             wallet_dir: str,
-            secret_address: ZethAddressPriv,
+            secret_address: ZklayAddressPriv,
             tree_hash: ITreeHash):
         # k_sk_receiver: EncryptionSecretKey):
         assert "_" not in username
         self.mixer_instance = mixer_instance
         self.username = username
         self.wallet_dir = wallet_dir
-        self.a_sk = secret_address.a_sk
-        self.k_sk_receiver = secret_address.k_sk
+        self.a_sk = secret_address.addr_sk
         self.state_file = join(wallet_dir, f"state_{username}")
         self.state = _load_state_or_default(self.state_file)
         _ensure_dir(join(self.wallet_dir, SPENT_SUBDIRECTORY))
