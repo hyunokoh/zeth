@@ -35,7 +35,7 @@ contract ZklayBase is BaseMerkleTree, ERC223ReceivingContract
     }
 
     // encrypted account
-    mapping(address => EncAccount) private zklay;
+    mapping(bytes32 => EncAccount) private zklay;
 
     // Contract variable that indicates the address of the token contract
     // If token = address(0) then the mixer works with ether
@@ -118,7 +118,7 @@ contract ZklayBase is BaseMerkleTree, ERC223ReceivingContract
     ///
     /// Returns the number of input notes, the number of output notes and the
     /// total number of primary inputs.
-    function get_amount_ct(address addr)
+    function get_amount_ct(bytes32 addr)
         external
         view
         returns (uint256 amount_ct)
@@ -143,7 +143,7 @@ contract ZklayBase is BaseMerkleTree, ERC223ReceivingContract
     /// These functions transfer klay and tokens
     function deposit(
         uint256[] memory proof,
-        address toaddress,
+        bytes32 toaddress,
         uint256 amount,
         uint256 ciphertext
     )
@@ -173,7 +173,7 @@ contract ZklayBase is BaseMerkleTree, ERC223ReceivingContract
     // TODO: After verifying deposit, we will implement withdraw.
     function withdraw(
         uint256[] memory proof,
-        address fromaddress,
+        bytes32 fromaddress,
         uint256 amount,
         uint256 ciphertext
     )

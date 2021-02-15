@@ -5,12 +5,14 @@
 pragma solidity ^0.5.0;
 pragma experimental ABIEncoderV2;
 
-import "./MixerBase.sol";
+//import "./MixerBase.sol";
+import "./ZklayBase.sol";
 import "./MiMC7.sol";
 
 /// Partial implementation of abstract MixerBase which implements the
 /// curve-specific methods to use the ALT-BN128 pairing.
-contract AltBN128MixerBase is MixerBase
+//contract AltBN128MixerBase is MixerBase
+contract AltBN128MixerBase is ZklayBase
 {
     // Constants regarding the hash digest length, the prime number used and
     // its associated length in bits and the max values (v_in and v_out)
@@ -41,7 +43,7 @@ contract AltBN128MixerBase is MixerBase
         uint256[] memory vk
     )
         public
-        MixerBase(mk_depth, token, vk)
+        ZklayBase(mk_depth, token, vk)
     {
     }
 
