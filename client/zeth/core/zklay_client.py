@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2015-2020 Clearmatics Technologies Ltd
+# Copyright (c) 2021-2021 Zkrypto Inc
 #
 # SPDX-License-Identifier: LGPL-3.0+
 
@@ -329,17 +329,28 @@ class MixerClient:
       
         addr = encode_encryption_public_key(zklay_address.addr_pk.a_pk) 
         old_account_ct = self.mixer_instance.functions.get_amount_ct(addr)
-        print("==========account ct: ",old_account_ct)
-        print("==========addr_sk: ",zklay_address.addr_sk.addr_sk)
+        #print("==========account ct: ",old_account_ct)
+        #print("==========addr_sk: ",zklay_address.addr_sk.addr_sk)
 
         before_amount = decrypt_sym(old_account_ct, zklay_address.addr_sk.addr_sk)
-        print("-----", before_amount)
+        #print("-----", before_amount)
 
-        new_account_ct = bytes(1)
+        new_account_ct = int(1)
 
-        proof = None
-        deposit_call = self.mixer_instance.functions.deposit(proof, addr,tx_value, new_account_ct)
+        proof = hex_list_to_uint256_list(["0x0101","0x0001", "0x0002"]) 
+        params = [proof, addr, to_zeth_units(eth_amount), new_account_ct]
 
+        return params
+
+    def zklay_deposit(
+            self,
+            deposit_params: List[Any],
+            sender_eth_address: str,
+            sender_eth_private_key: Optional[bytes],
+            tx_value: EtherValue,
+            call_gas: int = constants.DEFAULT_MIX_GAS_WEI
+    ) -> str:
+        deposit_call = self.mixer_instance.functions.deposit(*deposit_params)
         tx_hash = contracts.send_contract_call(
             self.web3,
             deposit_call,
@@ -348,31 +359,6 @@ class MixerClient:
             tx_value,
             constants.DEFAULT_MIX_GAS_WEI)
         return tx_hash.hex()
-
-
-    def zklay_deposit(
-            self,
-            prover_client: ProverClient,
-            zeth_address: ZethAddress,
-            sender_eth_address: str,
-            sender_eth_private_key: Optional[bytes],
-            eth_amount: EtherValue,
-            outputs: Optional[List[Tuple[ZethAddressPub, EtherValue]]] = None,
-            tx_value: Optional[EtherValue] = None
-    ) -> str:
-        if not outputs or len(outputs) == 0:
-            outputs = [(zeth_address.addr_pk, eth_amount)]
-        return self.joinsplit(
-            prover_client,
-            mk_tree,
-            sender_ownership_keypair=zeth_address.ownership_keypair(),
-            sender_eth_address=sender_eth_address,
-            sender_eth_private_key=sender_eth_private_key,
-            inputs=[],
-            outputs=outputs,
-            v_in=eth_amount,
-            v_out=EtherValue(0),
-            tx_value=tx_value)
 
     def joinsplit(
             self,

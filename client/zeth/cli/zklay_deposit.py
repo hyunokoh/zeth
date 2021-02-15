@@ -19,13 +19,15 @@ from typing import List, Tuple, Optional
 @option("--eth-addr", help="Sender's eth address or address filename")
 @option("--eth-private-key", help="Sender's eth private key file")
 @option("--wait", is_flag=True, help="Wait for transaction to be mined")
+@option("--show-parameters", is_flag=True, help="Show the deposit parameters")
 @pass_context
 def deposit(
         ctx: Context,
         value: str,
         eth_addr: Optional[str],
         eth_private_key: Optional[str],
-        wait: bool) -> None:
+        wait: bool,
+        show_parameters: bool) -> None:
     """
     Deposit function
     """

@@ -103,6 +103,16 @@ class ProverClient:
             verificationkey = stub.GetVerificationKey(_make_empty_message())
             return verificationkey
 
+    def get_balance_verification_key(self) -> VerificationKey:
+        """
+        Fetch the verification key for balance relation from the proving service
+        """
+        with grpc.insecure_channel(self.endpoint) as channel:
+            stub = prover_pb2_grpc.ProverStub(channel)  # type: ignore
+            print("-------------- Get the verification key --------------")
+            verificationkey = stub.GetBalanceVerificationKey(_make_empty_message())
+            return verificationkey
+
     def get_proof(
             self,
             proof_inputs: ProofInputs) -> ExtendedProof:
