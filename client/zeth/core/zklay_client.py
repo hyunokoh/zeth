@@ -328,41 +328,27 @@ class MixerClient:
     ) -> str:
       
         addr = encode_encryption_public_key(zklay_address.addr_pk.a_pk) 
-        account_ct = self.mixer_instance.functions.get_amount_ct(addr)
-        print("==========account ct: ",account_ct)
-        print(account_ct)
+        old_account_ct = self.mixer_instance.functions.get_amount_ct(addr)
+        print("==========account ct: ",old_account_ct)
+        print("==========addr_sk: ",zklay_address.addr_sk.addr_sk)
 
-        before_amount = decrypt_sym(account_ct, zklay_address.addr_sk)
+        before_amount = decrypt_sym(old_account_ct, zklay_address.addr_sk.addr_sk)
         print("-----", before_amount)
 
-        call_desc = DepositCallDescription(
-            sender_keypair=zklay_address.zklay_keypair(),
-            sender_eth_address=sender_eth_address,
-            sender_eth_private_key=sender_eth_private_key,
-            inputs=[],
-            outputs=outputs,
-            v_in=eth_amount,
-            v_out=EtherValue(0))
+        new_account_ct = bytes(1)
 
-        params = self.create_parameters(
-            prover_client,
-            sender_keypair=zklay_address.zklay_keypair(),
-            sender_eth_address=sender_eth_address,
-            sender_eth_private_key=sender_eth_private_key,
-            inputs=[],
-            outputs=outputs,
-            v_in=eth_amount,
-            v_out=EtherValue(0))
-        return self.joinsplit(
-            prover_client,
-            sender_keypair=zklay_address.zklay_keypair(),
-            sender_eth_address=sender_eth_address,
-            sender_eth_private_key=sender_eth_private_key,
-            inputs=[],
-            outputs=outputs,
-            v_in=eth_amount,
-            v_out=EtherValue(0),
-            tx_value=tx_value)
+        proof = None
+        deposit_call = self.mixer_instance.functions.deposit(proof, addr,tx_value, new_account_ct)
+
+        tx_hash = contracts.send_contract_call(
+            self.web3,
+            deposit_call,
+            sender_eth_address,
+            sender_eth_private_key,
+            tx_value,
+            constants.DEFAULT_MIX_GAS_WEI)
+        return tx_hash.hex()
+
 
     def zklay_deposit(
             self,
