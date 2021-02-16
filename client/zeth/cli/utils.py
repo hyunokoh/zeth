@@ -456,14 +456,7 @@ def create_prover_client(ctx: ClientConfig) -> ProverClient:
     Create a prover client using the settings from the commands context.
     """
     return ProverClient(
-        ctx.prover_server_endpoint, ctx.prover_config_file)
-
-def create_balance_prover_client(ctx: ClientConfig) -> ProverClient:
-    """
-    Create a balance prover client using the settings from the commands context.
-    """
-    return ProverClient(
-        ctx.balance_prover_server_endpoint, ctx.balance_prover_config_file)
+        ctx.prover_server_endpoint, ctx.balance_prover_server_endpoint, ctx.prover_config_file, ctx.balance_prover_config_file)
 
 def create_mixer_client(
         ctx: ClientConfig,

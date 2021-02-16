@@ -52,7 +52,9 @@ class ProverClient:
     def __init__(
             self,
             endpoint: str,
-            prover_config_file: Optional[str] = None):
+            balance_endpoint: str,
+            prover_config_file: Optional[str] = None,
+            balance_prover_config_file: Optional[str] = None):
         """
         If config_file is not None, the ProverConfiguration will be cached in the
         given file.
@@ -60,6 +62,9 @@ class ProverClient:
         self.endpoint = endpoint
         self.prover_config_file = prover_config_file
         self.prover_config: Optional[ProverConfiguration] = None
+        self.balance_endpoint = balance_endpoint
+        self.balance_prover_config_file = balance_prover_config_file
+        self.balance_prover_config: Optional[ProverConfiguration] = None
 
     def get_configuration(self) -> ProverConfiguration:
         """
@@ -107,7 +112,7 @@ class ProverClient:
         """
         Fetch the verification key for balance relation from the proving service
         """
-        with grpc.insecure_channel(self.endpoint) as channel:
+        with grpc.insecure_channel(self.balance_endpoint) as channel:
             stub = prover_pb2_grpc.ProverStub(channel)  # type: ignore
             print("-------------- Get the verification key --------------")
             verificationkey = stub.GetBalanceVerificationKey(_make_empty_message())
@@ -125,6 +130,17 @@ class ProverClient:
             proof = stub.Prove(proof_inputs)
             return proof
 
+    def get_balance_proof(
+            self,
+            proof_inputs: BalanceProofInputs) -> ExtendedProof:
+        """
+        Request a proof generation to the proving service
+        """
+        with grpc.insecure_channel(self.balance_endpoint) as channel:
+            stub = prover_pb2_grpc.ProverStub(channel)  # type: ignore
+            print("-------------- Get the proof --------------")
+            proof = stub.Prove(proof_inputs)
+            return proof
 
 def _make_empty_message() -> empty_pb2.Empty:
     return empty_pb2.Empty()

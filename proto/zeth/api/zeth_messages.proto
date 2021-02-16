@@ -34,3 +34,15 @@ message ProofInputs {
     string h_sig = 6;
     string phi = 7;
 }
+
+message BalanceProofInputs {
+    string hashed = 1;
+    string address = 2; 
+    string new_ct = 3;
+    string old_ct = 4;
+    string amount = 5;
+    string sk = 6;
+    string b_pk = 7;
+    string u_pk = 8;
+    string h_pk = 9;
+}

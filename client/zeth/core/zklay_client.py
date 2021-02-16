@@ -15,11 +15,11 @@ from zeth.core.encryption import \
     generate_encryption_keypair, encrypt, decrypt
 from zeth.core.zklay_encryption import encode_encryption_public_key, encryption_public_key_as_hex, decrypt_sym
 from zeth.core.merkle_tree import MerkleTree, compute_merkle_path
-from zeth.core.pairing import PairingParameters
+from zeth.core.pairing import PairingParameters, G1Point, G2Point
 import zeth.core.signing as signing
 import zeth.core.proto_utils as proto_utils
 from zeth.core.zksnark import IZKSnarkProvider, get_zksnark_provider, \
-    ExtendedProof
+    ExtendedProof, IProof
 from zeth.core.utils import EtherValue, digest_to_binary_string, \
     int64_to_hex, message_to_bytes, eth_address_to_bytes32, to_zeth_units, \
     get_contracts_dir, hex_list_to_uint256_list
@@ -147,6 +147,55 @@ class MixParameters:
         return MixParameters(
             ext_proof, signature_pk, signature, ciphertexts)
 
+class DepositParameters:
+    """
+    All data required to call the mixer, with no further processing required
+    (except creation of a transaction). This is the result of fully processing
+    a MixCallDescription, generating appropriate secret data and ZK-proof and
+    signing the result.
+    """
+    def __init__(
+            self,
+            proof: IProof,
+            zklay_address : EncryptionPublicKey,
+            eth_amount : EtherValue,
+            ciphertexts: List[bytes]):
+        self.proof = proof
+        self.zklay_address = zklay_address
+        self.eth_amount = eth_amount
+        self.ciphertexts = ciphertexts
+
+    @staticmethod
+    def from_json(zksnark: IZKSnarkProvider, params_json: str) -> DepositParameters:
+        return DepositParameters._from_json_dict(zksnark, json.loads(params_json))
+
+    def to_json(self) -> str:
+        return json.dumps(self._to_json_dict())
+
+    def _to_json_dict(self) -> Dict[str, Any]:
+        proof_json = self.proof.to_json_dict()
+        zklay_address_json = encryption_public_key_as_hex(self.zklay_address)
+        eth_amount_json = eth_amount.ether()
+        ciphertexts_json = [x.hex() for x in self.ciphertexts]
+        return {
+            "extended_proof": proof_json,
+            "zklay_address": zklay_address_json,
+            "eth_amount": ether_amount_json,
+            "ciphertexts": ciphertexts_json,
+        }
+
+    @staticmethod
+    def _from_json_dict(
+            zksnark: IZKSnarkProvider,
+            json_dict: Dict[str, Any]) -> DepositParameters:
+        ext_proof = ExtendedProof.from_json_dict(
+            zksnark, json_dict["extended_proof"])
+        zklay_address = decode_encryption_public_key(json_dict["zklay_address"])
+        eth_amount = EtherValue(json_dict["eth_amount"])
+        ciphertexts = [bytes.fromhex(x) for x in json_dict["ciphertexts"]]
+        return DepositParameters(
+            ext_proof, zklay_address, eth_amount, ciphertexts)
+
 
 def mix_parameters_to_contract_arguments(
         zksnark: IZKSnarkProvider,
@@ -166,6 +215,23 @@ def mix_parameters_to_contract_arguments(
         mix_parameters.ciphertexts,
     ]
 
+def deposit_parameters_to_contract_arguments(
+        zksnark: IZKSnarkProvider,
+        pp: PairingParameters,
+        deposit_parameters: DepositParameters) -> List[Any]:
+    """
+    Convert DepositParameters to a list of eth ABI objects which can be passed to
+    the contract's deposit method.
+    """
+    proof_contract_params = zksnark.proof_to_contract_parameters(
+        deposit_parameters.proof, pp)
+    return [
+        proof_contract_params,
+        deposit_parameters.proof, 
+        deposit_parameters.zklay_address, 
+        deposit_parameters.amount, 
+        deposit_parameters.ciphertexts
+    ]
 
 class MixOutputEvents:
     """
@@ -329,28 +395,42 @@ class MixerClient:
       
         addr = encode_encryption_public_key(zklay_address.addr_pk.a_pk) 
         old_account_ct = self.mixer_instance.functions.get_amount_ct(addr)
-        #print("==========account ct: ",old_account_ct)
-        #print("==========addr_sk: ",zklay_address.addr_sk.addr_sk)
+        print("==========account ct: ",old_account_ct)
+        # print("==========addr_sk: ",zklay_address.addr_sk.addr_sk)
 
         before_amount = decrypt_sym(old_account_ct, zklay_address.addr_sk.addr_sk)
-        #print("-----", before_amount)
+        # print("-----", before_amount)
 
         new_account_ct = int(1)
 
+        #prover_inputs = BalanceProofInputs()
+        #zksnark = get_zksnark_provider(self.prover_config.zksnark_name)
+
+        # Query the prover_server for the related proof
+        #ext_proof_proto = prover_client.get_proof(prover_inputs)
+        #ext_proof = zksnark.extended_proof_from_proto(ext_proof_proto)
+
         proof = hex_list_to_uint256_list(["0x0101","0x0001", "0x0002"]) 
-        params = [proof, addr, to_zeth_units(eth_amount), new_account_ct]
+        #ext_proof = ExtendedProof(proof)
+        # params = [proof, addr, to_zeth_units(eth_amount), new_account_ct]
+        params = DepositParameters(proof, addr, eth_amount, new_account_ct)
 
         return params
 
     def zklay_deposit(
             self,
-            deposit_params: List[Any],
+            deposit_params: DepositParameters,
             sender_eth_address: str,
             sender_eth_private_key: Optional[bytes],
             tx_value: EtherValue,
             call_gas: int = constants.DEFAULT_MIX_GAS_WEI
     ) -> str:
-        deposit_call = self.mixer_instance.functions.deposit(*deposit_params)
+        zksnark = get_zksnark_provider(self.prover_config.zksnark_name)
+        pp = self.prover_config.pairing_parameters
+        mix_params_eth = deposit_parameters_to_contract_arguments(
+            zksnark, pp, deposit_params)
+
+        deposit_call = self.mixer_instance.functions.deposit(*deposit_params_eth)
         tx_hash = contracts.send_contract_call(
             self.web3,
             deposit_call,

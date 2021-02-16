@@ -4,8 +4,7 @@
 
 from zeth.cli.utils import create_zklay_client_and_zklay_desc, \
     load_zklay_address, open_zklay_wallet, parse_output, load_eth_address, \
-    load_eth_private_key, create_prover_client, \
-    create_balance_prover_client
+    load_eth_private_key, create_prover_client 
 from zeth.core.constants import JS_INPUTS, JS_OUTPUTS
 from zeth.core.zklay_client import ZethAddressPub
 from zeth.core.utils import EtherValue, from_zeth_units
@@ -34,7 +33,7 @@ def deposit(
 
     value_pub = EtherValue(value)
     client_ctx = ctx.obj
-    prover_client = create_balance_prover_client(client_ctx)
+    prover_client = create_prover_client(client_ctx)
     zklay_client, zklay_desc = create_zklay_client_and_zklay_desc(
         client_ctx, prover_client)
 
