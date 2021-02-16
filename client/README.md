@@ -36,6 +36,7 @@ function withdraw(address sender, uint256 amount, ciphertext ct, proof pi);
 
 ```
 
+## zeth_proto에 있는 protocol 변경시 (solidity 함수 입출력 변경시)에는 client에서 make를 수행하여 client/api 내에 py르 생성하도록 한ㄷ.
 
 # Python client to interact with the prover
 
