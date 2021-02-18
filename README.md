@@ -83,7 +83,7 @@ docker run -ti -p 50051:50051 --name zklay zklay-dev:latest
 
 # 이미 생성된 도커 이미지를 실행 시키기 위한 명령어
 docker start zklay
-docker attatch zklay
+docker attach zklay
 
 # All the commands below are run in the docker container
 # Configure your environment
